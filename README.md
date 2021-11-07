@@ -2,6 +2,8 @@
 
 Music Instrument Detection using Machine Learning Python 
 
-Extract Zip file in  audio then install packages 
+Audio Dataset files are in audio folder 
+
+Install packages 
 
 Run It
