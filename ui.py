@@ -1,4 +1,5 @@
 import joblib
+from numpy.core.numeric import outer
 from sklearn.preprocessing import StandardScaler
 import librosa.display
 import librosa
@@ -66,21 +67,23 @@ def load_model():
     global svclassifier
     svclassifier = joblib.load('trainedSVM.joblib')
     feature_vectors = []
-    print(classes
-          [int(loadmx(
-              './audio/london_phill_dataset_multi/trumpet/trumpet_A3_05_pianissimo_normal.mp3'))])
+    output = classes[int(loadmx(
+        './audio/london_phill_dataset_multi/trumpet/trumpet_A3_05_pianissimo_normal.mp3'))]
+    print(output)
+    return render_template('index.html', output=output)
 
     # print(classes
     #       [int(svclassifier.predict([scaled_feature_vectors[0]]))])
     # svclassifier.predict()
 
 
-# @app.route('/', methods=['GET', 'POST'])
-# @app.route('/')
-# def index():
-#     return render_template('index.html')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
+def index():
+    return load_model()
+    # return render_template('index.html')
 
 
 if __name__ == '__main__':
-    load_model()
-    # app.run(debug=True)
+    # load_model()
+    app.run(debug=True)
