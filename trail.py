@@ -7,6 +7,7 @@ from numpy.core.numeric import outer
 from sklearn.preprocessing import StandardScaler
 import librosa.display
 import librosa
+import time
 import pickle
 import numpy as np
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
@@ -36,7 +37,23 @@ def allowed_file(filename):
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        # check if the post request has the file part
+        try:
+            file = request.files['file']
+            filename = secure_filename(file.filename)
+            basedir = os.path.abspath(os.path.dirname(__file__))
+
+            # ap.config['UPLOAD_FOLDER']
+            # print(file.path)
+            pth = os.path.join(
+                basedir, app.config['UPLOAD_FOLDER'], filename)
+            file.save(pth)
+            print(pth)
+            output = classes[int(loadmx(pth))]
+            print(output)
+            return render_template('index.html', output=output)
+        except Exception as e:
+            print(e)
+            # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
@@ -58,19 +75,30 @@ def upload_file():
             print(pth)
             output = classes[int(loadmx(pth))]
             print(output)
-            return render_template('index.html', output=output)
-            # return redirect(url_for('upload_file', name=filename))
+            redirect(url_for('upload_file', name=output))
+            time.sleep(4)
+            # return render_template('index.html', output=output)
+            return redirect(url_for('upload_file', name=output))
     return '''
+ 
     <!doctype html>
     <title>Upload new File</title>
+   
+    
     <h1>Upload new File</h1>
     <form method=post enctype=multipart/form-data>
       <input type=file name=file>
       <input type=submit value=Upload>
+      
     </form>
     '''
 
 # *******
+#  <style>
+#     div {
+#          background-image: url('https://picsum.photos/200');
+#         }
+#     </style>
 
 
 def get_features(y, sr=fs):
@@ -127,3 +155,12 @@ def loadmx(f):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+# <!doctype html>
+#     <title>Upload new File</title>
+#     <h1>Upload new File</h1>
+#     <form method=post enctype=multipart/form-data>
+#       <input type=file name=file>
+#       <input type=submit value=Upload>
+#     </form>
